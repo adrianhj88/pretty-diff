@@ -2,7 +2,6 @@
 
 var fs = require( "fs" );
 var path = require( "path" );
-var os = require( "os" );
 var open = require( "open" );
 var diff = require( "./diff" );
 
@@ -30,7 +29,7 @@ diff( process.argv.slice( 2 ).join( " " ), function( error, parsedDiff ) {
 function generatePrettyDiff( parsedDiff ) {
 	var template = fs.readFileSync( __dirname + "/template.html", "utf8" );
 	var diffHtml = "";
-	var tempPath = path.join( os.tmpdir(), "diff.html" );
+    var path = "/tmp/mail.html";
 
 	for ( var file in parsedDiff ) {
 		diffHtml += "<h2>" + file + "</h2>" +
@@ -39,8 +38,7 @@ function generatePrettyDiff( parsedDiff ) {
 		"</div></div>";
 	}
 
-	fs.writeFileSync( tempPath, template.replace( "{{diff}}", diffHtml ) );
-	open( tempPath );
+	fs.writeFileSync( path, template.replace( "{{diff}}", diffHtml ), "utf8" );
 }
 
 var markUpDiff = function() {
