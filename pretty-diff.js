@@ -31,7 +31,6 @@ diff(process.argv.slice(2).join(" "), function(error, parsedDiff) {
 function generatePrettyDiff(mail, title, parsedDiff) {
     var template = fs.readFileSync(__dirname + "/template.html", "utf8");
     var diffHtml = "";
-    var path = "/tmp/mail.html";
 
     for (var file in parsedDiff) {
         diffHtml += "<h2>" + file + "</h2>" +
@@ -42,7 +41,7 @@ function generatePrettyDiff(mail, title, parsedDiff) {
     template = template.replace(/{{title}}/g, title);
     template = template.replace(/{{diff}}/, diffHtml);
 
-    fs.writeFileSync(path, template, "utf8");
+    process.stdout.write(template);
 }
 
 var markUpDiff = function() {
