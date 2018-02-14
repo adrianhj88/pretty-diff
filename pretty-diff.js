@@ -4,8 +4,9 @@ var fs = require("fs");
 var path = require("path");
 var open = require("open");
 var diff = require("./diff");
+var argv = require('minimist')(process.argv.slice(2));
 
-diff(process.argv.slice(2).join(" "), function(error, parsedDiff) {
+diff(argv._.join(" "), function(error, parsedDiff) {
     if (error) {
         // Usage error, assume we're not in a git directory
         if (error.code === 129) {
@@ -22,18 +23,33 @@ diff(process.argv.slice(2).join(" "), function(error, parsedDiff) {
         return;
     }
 
-    var mail = "mail@placeholder.com";
-    var title = "Title placeholder";
+    var mail = argv["mail"];
+    if (mail === undefined) {
+        process.stderr.write("Missing parameter --mail or -m\n");
+        return;
+    }
+
+    var title = argv["title"];
+    if (title === undefined) {
+        process.stderr.write("Missing parameter --title or -t\n");
+        return;
+    }
 
     generatePrettyDiff(mail, title, parsedDiff);
 });
 
 function generatePrettyDiff(mail, title, parsedDiff) {
     var template = fs.readFileSync(__dirname + "/template.html", "utf8");
-    var diffHtml = "";
+    var diffHtml = "<h1>Files changed:</h1>\n";
+
+    diffHtml += "<ul>\n";
+    for (var file in parsedDiff) {
+        diffHtml += "<li><a href='#" + file + "'>" + file + "</a></li>\n";
+    }
+    diffHtml += "</ul>\n";
 
     for (var file in parsedDiff) {
-        diffHtml += "<h2>" + file + "</h2>" +
+        diffHtml += "<h2 id='" + file + "'>" + file + "</h2>" +
             "<div class='file-diff'><div>" + markUpDiff(parsedDiff[file]) + "</div></div>";
     }
 
