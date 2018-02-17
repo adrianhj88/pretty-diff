@@ -6,7 +6,9 @@ var open = require("open");
 var diff = require("./diff");
 var argv = require('minimist')(process.argv.slice(2));
 
-diff(argv._.join(" "), function(error, parsedDiff) {
+var payload = JSON.parse(argv._);
+
+diff(payload.changes[0].fromHash + " " + payload.changes[0].toHash, function(error, parsedDiff) {
     if (error) {
         // Usage error, assume we're not in a git directory
         if (error.code === 129) {
@@ -29,11 +31,7 @@ diff(argv._.join(" "), function(error, parsedDiff) {
         return;
     }
 
-    var title = argv["title"];
-    if (title === undefined) {
-        process.stderr.write("Missing parameter --title or -t\n");
-        return;
-    }
+    var title = payload.actor.displayName;
 
     generatePrettyDiff(mail, title, parsedDiff);
 });
