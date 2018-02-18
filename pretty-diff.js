@@ -5,18 +5,19 @@ var path = require("path");
 var open = require("open");
 var diff = require("./diff");
 var argv = require('minimist')(process.argv.slice(2));
+var cmd = require('node-cmd');
+
+cmd.get("git pull", function(error) {
+    if (error) {
+        console.log('error', error)
+    }
+});
 
 var payload = JSON.parse(argv._);
 
 diff(payload.changes[0].fromHash + " " + payload.changes[0].toHash, function(error, parsedDiff) {
     if (error) {
-        // Usage error, assume we're not in a git directory
-        if (error.code === 129) {
-            process.stderr.write("Error: Not a git repository\n");
-            return;
-        }
-
-        process.stderr.write(error.message);
+        console.log('error', error)
         return;
     }
 

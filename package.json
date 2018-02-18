@@ -30,6 +30,7 @@
   "dependencies": {
     "github-request": "1.2.4",
     "minimist": "1.2.0",
+    "node-cmd": "3.0.0",
     "open": "0.0.5"
   }
 }
